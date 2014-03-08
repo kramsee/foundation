@@ -76,7 +76,15 @@
             var $associatedElement = $('#' + self.escape($(this).attr('for'))).not('[data-customforms="disabled"]'),
               $customCheckbox,
               $customRadio;
-
+              
+              if ($associatedElement.length === 0){
+                if ($(this).find('span.custom.checkbox').length !== 0) {
+                  $associatedElement = $('#' + self.escape($(this).find('input[type="checkbox"]').attr('id'))).not('[data-customforms="disabled"]')
+                } else if ($(this).find('span.custom.radio').length !== 0) {
+                  $associatedElement = $('#' + self.escape($(this).find('input[type="radio"]').attr('id'))).not('[data-customforms="disabled"]')
+                }
+              }
+              
             if ($associatedElement.length !== 0) {
               if ($associatedElement.attr('type') === 'checkbox') {
                 e.preventDefault();
