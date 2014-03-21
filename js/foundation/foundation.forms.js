@@ -178,17 +178,24 @@
       $(window).on('keydown', function (e) {
         var focus = document.activeElement,
             self = Foundation.libs.forms,
+            focusedDropDown = $(focus).closest(".dropdown.custom"),
             dropdown = $('.custom.dropdown'),
-      select = getFirstPrevSibling(dropdown, 'select'),
+      select = getFirstPrevSibling(focusedDropDown, 'select'),
       inputs = $('input,select,textarea,button'); // Zepto-compatible jQuery(":input")
-
+      
         if (dropdown.length > 0 && dropdown.hasClass('open')) {
           e.preventDefault();
 
-      if (e.which === 9) {
-          $(inputs[$(inputs).index(select) + 1]).focus();
-        dropdown.removeClass('open');
-      }
+          if (e.which === 9) {
+            var nextInput = $(inputs[$(inputs).index(select) + 1])
+        
+            if (nextInput.hasClass('hidden-field')) {
+              $(inputs[$(inputs).index(select) + 1]).next('.custom.dropdown').find('.current').focus()
+            } else {
+              $(inputs[$(inputs).index(select) + 1]).focus();            
+            }
+              dropdown.removeClass('open');
+          }
 
           if (e.which === 13) {
             dropdown.find('li.selected').trigger('click');
@@ -232,10 +239,11 @@
 
     $(window).on('keyup', function (e) {
           var focus = document.activeElement,
+              focusedDropDown = $(focus).closest(".dropdown.custom"),
               dropdown = $('.custom.dropdown');
-
-      if (focus === dropdown.find('.current')[0]) {
-        dropdown.find('.selector').focus().click();
+              
+        if (focus === focusedDropDown.find('.current')[0]) {  
+          focusedDropDown.find('.selector').focus().click();
       }
     });
 
