@@ -329,6 +329,9 @@
     animMargin[margin] = '0%';
 
     this.next = function(current, next, callback) {
+      current.animate({
+        'margin-left': '-100%'
+      }, duration, "linear");
       next.animate(animMargin, duration, 'linear', function() {
         current.css(margin, '100%');
         callback();
@@ -337,6 +340,9 @@
 
     this.prev = function(current, prev, callback) {
       prev.css(margin, '-100%');
+      current.animate({
+        'margin-left': '100%'
+      }, duration, "linear");
       prev.animate(animMargin, duration, 'linear', function() {
         current.css(margin, '100%');
         callback();
