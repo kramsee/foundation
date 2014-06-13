@@ -207,8 +207,8 @@
       animate = new FadeAnimation(settings, slides_container);
       if (settings.animation === 'slide') 
         animate = new SlideAnimation(settings, slides_container);        
-      $(document).on('click touchstart', '.'+settings.next_class, self.next);
-      $(document).on('click touchstart', '.'+settings.prev_class, self.prev);
+      $(document).on('click touchend', '.'+settings.next_class, self.next);
+      $(document).on('click touchend', '.'+settings.prev_class, self.prev);
       container.on('click', '[data-orbit-slide]', self.link_bullet);
       container.on('click', self.toggle_timer);
       if (settings.swipe) {
