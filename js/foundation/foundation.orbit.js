@@ -156,7 +156,7 @@
     };
 
     self.link_bullet = function(e) {
-      var index = $(this).attr('data-orbit-slide');
+      var index = $(this).attr('data-orbit-slide-number');
       if ((typeof index === 'string') && (index = $.trim(index)) != "") {
         self._goto(parseInt(index));
       }
