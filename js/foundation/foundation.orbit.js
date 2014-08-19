@@ -77,11 +77,12 @@
         container.addClass(settings.stack_on_small_class);
       }
 
-      self.update_slide_number(0);
-      self.update_active_link(0);
+      self.update_slide_number(settings.start_on_slide_number);
+      self.update_active_link(settings.start_on_slide_number);
     };
 
-    self._goto = function(next_idx, start_timer) {
+    self._goto = function(next_idx, start_timer, initial) {
+      if (typeof(initial) === "undefined") {initial = false}
       // if (locked) {return false;}
       if (next_idx === idx) {return false;}
       if (typeof timer === 'object') {timer.restart();}
@@ -122,24 +123,24 @@
 
       if (slides.length === 1) {callback(); return false;}
 
-      var start_animation = function() {
-        if (dir === 'next') {animate.next(current, next, callback);}
-        if (dir === 'prev') {animate.prev(current, next, callback);}        
+      var start_animation = function(initial) {
+        if (dir === 'next') {animate.next(current, next, callback, initial);}
+        if (dir === 'prev') {animate.prev(current, next, callback, initial);}
       };
 
       if (next.height() > slides_container.height() && settings.variable_height) {
         slides_container.animate({'height': next.height()}, 250, 'linear', start_animation);
       } else {
-        start_animation();
+        start_animation(initial);
       }
     };
-    
+
     self.next = function(e) {
       e.stopImmediatePropagation();
       e.preventDefault();
       self._goto(idx + 1);
     };
-    
+
     self.prev = function(e) {
       e.stopImmediatePropagation();
       e.preventDefault();
@@ -165,7 +166,7 @@
     self.timer_callback = function() {
       self._goto(idx + 1, true);
     }
-    
+
     self.compute_dimensions = function() {
       var current = $(slides_container.children().get(idx));
       var h = current.height();
@@ -205,8 +206,9 @@
       self.build_markup();
       if (settings.timer) {timer = self.create_timer(); timer.start();}
       animate = new FadeAnimation(settings, slides_container);
-      if (settings.animation === 'slide') 
-        animate = new SlideAnimation(settings, slides_container);        
+      if (settings.animation === 'slide') {
+        animate = new SlideAnimation(settings, slides_container);
+      }
       $(document).on('click touchend', '.'+settings.next_class, self.next);
       $(document).on('click touchend', '.'+settings.prev_class, self.prev);
       container.on('click', '[data-orbit-slide]', self.link_bullet);
@@ -267,6 +269,7 @@
       $(window).on('load', function(){
         container.prev('.preloader').css('display', 'none');
       });
+      self._goto(settings.start_on_slide_number, false, true);
       slides_container.trigger('orbit:ready');
     };
 
@@ -328,7 +331,15 @@
     var animMargin = {};
     animMargin[margin] = '0%';
 
-    this.next = function(current, next, callback) {
+    this.next = function(current, next, callback, initial) {
+      if (typeof(initial) === "undefined") {
+        var initial = false
+      }
+      if (initial) {
+        duration = 0;
+      } else {
+        duration = settings.animation_speed
+      }
       current.animate({
         'margin-left': '-100%'
       }, duration, "linear");
@@ -338,7 +349,15 @@
       });
     };
 
-    this.prev = function(current, prev, callback) {
+    this.prev = function(current, prev, callback, initial) {
+      if (typeof(initial) === "undefined") {
+        var initial = false
+      }
+      if (initial) {
+        duration = 0;
+      } else {
+        duration = settings.animation_speed
+      }
       prev.css(margin, '-100%');
       current.animate({
         'margin-left': '100%'
@@ -390,6 +409,7 @@
       navigation_arrows: true,
       slide_number: true,
       slide_number_text: 'of',
+      start_on_slide_number: 0,
       container_class: 'orbit-container',
       stack_on_small_class: 'orbit-stack-on-small',
       next_class: 'orbit-next',
